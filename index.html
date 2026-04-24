@@ -1,69 +1,695 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Talleres · Japi Hub</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --primary:#4831E9; --primary-soft:#EAE7FD; --orange:#FF782C; --lime:#CEF13B; --lime-soft:#F4FDD0; --bg:#F7F8FC; --surface:#FFFFFF; --surface-alt:#F1F3FA; --border:#E3E7F2; --text:#151827; --text-2:#5D6478; --text-muted:#8A90A2; --dark:#101426; --success:#1DB97A; --error:#E63B3B; --error-soft:#FDEBEB; }
-    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-    nav { background:var(--dark); height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:99; }
-    .logo { display:flex; align-items:center; gap:8px; }.logo-text{font-weight:900;color:#fff;font-size:17px;letter-spacing:.5px}.logo-badge{background:var(--lime);color:var(--dark);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800}
-    .nav-tabs{display:flex;gap:6px}.nav-tab{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:700}.nav-tab.active{background:var(--primary);border-color:var(--primary)}
-    .view{display:none;padding-bottom:48px}.view.active{display:block}.container{max-width:580px;margin:0 auto;padding:32px 20px}.container-wide{max-width:900px;margin:0 auto;padding:20px 16px}
-    .hero{text-align:center;margin-bottom:36px}.hero-tag{display:inline-block;background:var(--primary-soft);color:var(--primary);border-radius:12px;padding:6px 18px;font-weight:800;font-size:12px;letter-spacing:1px;margin-bottom:14px}.hero h1{font-size:26px;font-weight:900;line-height:1.25}.hero h1 span{color:var(--primary)}.hero p{color:var(--text-2);font-size:14px;margin-top:8px}
-    .card,.panel{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}.card-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
-    .taller-fecha{color:var(--primary);font-weight:800;font-size:15px}.taller-meta{color:var(--text-muted);font-size:13px;margin-top:4px}.taller-precio{font-weight:900;font-size:20px;margin-top:12px}.taller-iva{color:var(--text-muted);font-size:12px;margin-left:8px}
-    .progress-wrap{margin-top:16px}.progress-label{font-size:12px;margin-bottom:5px}.progress-bar{background:var(--surface-alt);border-radius:999px;height:7px;overflow:hidden}.progress-fill{height:100%;border-radius:999px;transition:width .4s}
-    .btn{display:inline-block;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px;text-align:center;border:none;text-decoration:none;transition:opacity .15s}.btn:hover{opacity:.88}.btn-primary{background:var(--primary);color:#fff}.btn-success{background:var(--success);color:#fff}.btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}.btn-secondary{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary)}.btn-danger{background:var(--error-soft);color:var(--error);border:1.5px solid rgba(230,59,59,.2)}.btn-sm{padding:5px 13px;font-size:12px}.btn-block{width:100%;padding:13px;font-size:15px}.btn-wa{background:#25D366;color:#fff;display:block;margin-bottom:14px;padding:13px;font-size:15px;text-align:center;border-radius:10px;text-decoration:none;font-weight:700}
-    .form-group{margin-bottom:14px}.form-group label,.form-mini label{color:var(--text-2);font-size:12px;font-weight:600;display:block;margin-bottom:5px}.form-group input,.form-group textarea,.form-mini input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--text);font-size:14px;outline:none;font-family:inherit}.form-mini input{background:var(--surface-alt)}.form-group textarea{resize:vertical;min-height:70px}.form-highlight{background:var(--primary-soft);border-radius:12px;padding:10px 16px;margin-bottom:22px}.form-highlight .fecha{color:var(--primary);font-weight:800;font-size:14px}.form-highlight .sub{color:var(--text-2);font-size:12px;margin-top:2px}
-    .sinpe-box{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:24px;margin-bottom:20px}.sinpe-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}.sinpe-label{color:var(--text-2);font-size:13px}.sinpe-val{font-weight:800;font-size:17px}.sinpe-val.primary{color:var(--primary)}.sinpe-val.success{color:var(--success)}.sinpe-val.normal{color:var(--text);font-size:14px;font-weight:600}.confirm-box{background:var(--lime-soft);border-radius:12px;padding:12px 16px;color:#3a6e00;font-size:13px;line-height:1.6}.back-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;margin-bottom:20px;padding:0}
-    .admin-tabs{display:flex;gap:8px;margin-bottom:20px}.admin-tab{background:var(--surface);color:var(--text-2);border:1.5px solid var(--border);border-radius:10px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:13px}.admin-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .admin-login{max-width:420px;margin:48px auto}.login-title{font-size:24px;font-weight:900;margin-bottom:8px;text-align:center}.login-sub{color:var(--text-2);font-size:14px;text-align:center;margin-bottom:20px}.login-error{display:none;background:var(--error-soft);color:var(--error);border-radius:10px;padding:10px 13px;font-size:13px;font-weight:700;margin-bottom:14px;text-align:center}
-    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center}.stat-val{font-size:26px;font-weight:900}.stat-label{font-size:11px;color:var(--text-muted);margin-top:2px}.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}.filter-btn{background:var(--surface);color:var(--text-2);border:1.5px solid var(--border);border-radius:8px;padding:5px 13px;font-size:12px;cursor:pointer;font-weight:500}.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:700}
-    .lead-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}.lead-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}.lead-nombre{font-weight:700;font-size:15px}.lead-meta{color:var(--text-muted);font-size:12px;margin-top:3px}.lead-meta .alerta{color:var(--error);margin-left:8px}.lead-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.badge{border-radius:20px;padding:3px 11px;font-size:11px;font-weight:700;white-space:nowrap;display:inline-block}.badge-caliente{background:var(--orange);color:#fff}.badge-tibio{background:#FFF0E8;color:var(--orange)}.badge-frio{background:var(--primary-soft);color:var(--primary)}.badge-pagado{background:var(--lime-soft);color:#3a6e00}
-    .detail-panel,.taller-admin-card,.nuevo-taller-form{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:24px;margin-top:20px;box-shadow:0 4px 20px rgba(0,0,0,.07)}.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.close-btn{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.detail-item{background:var(--surface-alt);border-radius:10px;padding:10px 14px}.detail-item-label{color:var(--text-muted);font-size:11px;font-weight:600}.detail-item-val{color:var(--text);font-size:14px;font-weight:600;margin-top:2px}.estado-btns{display:flex;gap:8px}.estado-btn{background:var(--surface-alt);color:var(--text-2);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:700}.estado-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}.section-label{color:var(--text-2);font-size:12px;font-weight:700;margin-bottom:8px}.success-banner{background:var(--lime-soft);border:1.5px solid var(--lime);border-radius:12px;padding:12px 16px;color:#3a6e00;font-weight:700;text-align:center}.alert-box{background:var(--error-soft);border:1.5px solid rgba(230,59,59,.2);border-radius:14px;padding:14px 18px;margin-bottom:18px}.alert-title{color:var(--error);font-weight:800;margin-bottom:6px}.alert-item{color:var(--text-2);font-size:13px;margin-bottom:3px}.alert-wa{color:#25D366;margin-left:10px;font-size:12px;text-decoration:none;font-weight:700}
-    .taller-admin-card{margin-top:0;margin-bottom:14px}.taller-admin-card.editing{border-color:var(--primary)}.taller-admin-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}.taller-admin-info .fecha{color:var(--primary);font-weight:800;font-size:16px}.taller-admin-info .meta{color:var(--text-2);font-size:13px;margin-top:4px}.taller-admin-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.estado-dot{font-size:13px;font-weight:700}.estado-dot.activo{color:var(--success)}.estado-dot.oculto{color:var(--text-muted)}.inscritos-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.inscrito-chip{border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700}.inscrito-chip.pagado{background:var(--lime-soft);color:#3a6e00}.inscrito-chip.pendiente{background:var(--primary-soft);color:var(--primary)}.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}.add-btn-row{display:flex;justify-content:flex-end;margin-bottom:14px}.nuevo-taller-form{border-color:var(--primary);margin-top:0;margin-bottom:18px}.spinner{text-align:center;padding:40px;color:var(--text-muted);font-size:14px}
-    @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr)}.form-grid-3,.detail-grid{grid-template-columns:1fr}.nav-tab{padding:6px 10px}}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Talleres · Japi Hub</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#4831E9;--primary-soft:#EAE7FD;
+  --orange:#FF782C;--orange-soft:#FFF0E8;
+  --lime:#CEF13B;--lime-soft:#F4FDD0;
+  --bg:#F7F8FC;--surface:#FFFFFF;--surface-alt:#F1F3FA;--border:#E3E7F2;
+  --text:#151827;--text-2:#5D6478;--text-muted:#8A90A2;
+  --dark:#101426;
+  --success:#1DB97A;--success-soft:#E6F9F2;
+  --error:#E63B3B;--error-soft:#FDEBEB;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:99}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-text{font-weight:900;color:#fff;font-size:17px;letter-spacing:.5px}
+.logo-badge{background:var(--lime);color:var(--dark);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800}
+.nav-tab{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:700;margin-left:6px}
+.nav-tab.active{background:var(--primary);border-color:var(--primary)}
+
+/* VIEWS */
+.view{display:none;padding-bottom:48px}
+.view.active{display:block}
+
+/* CONTAINERS */
+.container{max-width:580px;margin:0 auto;padding:32px 20px}
+.container-wide{max-width:900px;margin:0 auto;padding:20px 16px}
+
+/* HERO */
+.hero{text-align:center;margin-bottom:36px}
+.hero-tag{display:inline-block;background:var(--primary-soft);color:var(--primary);border-radius:12px;padding:6px 18px;font-weight:800;font-size:12px;letter-spacing:1px;margin-bottom:14px}
+.hero h1{font-size:26px;font-weight:900;line-height:1.25;color:var(--text)}
+.hero h1 span{color:var(--primary)}
+.hero p{color:var(--text-2);font-size:14px;margin-top:8px}
+
+/* CARDS */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+
+/* TALLER PÚBLICO */
+.t-fecha{color:var(--primary);font-weight:800;font-size:15px}
+.t-meta{color:var(--text-muted);font-size:13px;margin-top:4px}
+.t-precio{font-weight:900;font-size:20px;margin-top:12px}
+.t-iva{color:var(--text-muted);font-size:12px;margin-left:8px}
+.progress-wrap{margin-top:16px}
+.progress-label{font-size:12px;margin-bottom:5px}
+.progress-bar{background:var(--surface-alt);border-radius:999px;height:7px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;transition:width .4s}
+
+/* BUTTONS */
+.btn{display:inline-block;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px;text-align:center;border:none;text-decoration:none;transition:opacity .15s;font-family:inherit}
+.btn:hover{opacity:.88}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}
+.btn-secondary{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary)}
+.btn-danger{background:var(--error-soft);color:var(--error);border:1.5px solid rgba(230,59,59,.2)}
+.btn-sm{padding:5px 13px;font-size:12px}
+.btn-block{width:100%;padding:13px;font-size:15px;display:block}
+.btn-wa{background:#25D366;color:#fff;display:block;margin-bottom:14px;padding:13px;font-size:15px;text-align:center;border-radius:10px;text-decoration:none;font-weight:700}
+
+/* FORMS */
+.form-group{margin-bottom:14px}
+.form-group label{color:var(--text-2);font-size:12px;font-weight:600;display:block;margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--text);font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-highlight{background:var(--primary-soft);border-radius:12px;padding:10px 16px;margin-bottom:22px}
+.form-highlight .f-fecha{color:var(--primary);font-weight:800;font-size:14px}
+.form-highlight .f-sub{color:var(--text-2);font-size:12px;margin-top:2px}
+
+/* SINPE */
+.sinpe-box{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:24px;margin-bottom:20px}
+.sinpe-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.sinpe-label{color:var(--text-2);font-size:13px}
+.sinpe-val{font-weight:800;font-size:17px}
+.sinpe-val.c-primary{color:var(--primary)}
+.sinpe-val.c-success{color:var(--success)}
+.sinpe-val.c-normal{color:var(--text);font-size:14px;font-weight:600}
+
+/* CONFIRM */
+.confirm-box{background:var(--lime-soft);border-radius:12px;padding:12px 16px;color:#3a6e00;font-size:13px;line-height:1.6}
+.back-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;margin-bottom:20px;padding:0}
+
+/* ADMIN */
+.admin-tabs{display:flex;gap:8px;margin-bottom:20px}
+.admin-tab{background:var(--surface);color:var(--text-2);border:1.5px solid var(--border);border-radius:10px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit}
+.admin-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-header{display:flex;justify-content:flex-end;margin-bottom:8px}
+.logout-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 13px;font-size:12px;color:var(--text-2);cursor:pointer;font-family:inherit}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center}
+.stat-val{font-size:26px;font-weight:900}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* FILTERS */
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.filter-btn{background:var(--surface);color:var(--text-2);border:1.5px solid var(--border);border-radius:8px;padding:5px 13px;font-size:12px;cursor:pointer;font-weight:500;font-family:inherit}
+.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:700}
+
+/* LEADS */
+.lead-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px;transition:border-color .15s}
+.lead-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.lead-nombre{font-weight:700;font-size:15px}
+.lead-meta{color:var(--text-muted);font-size:12px;margin-top:3px}
+.lead-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* BADGES */
+.badge{border-radius:20px;padding:3px 11px;font-size:11px;font-weight:700;white-space:nowrap;display:inline-block}
+.badge-caliente{background:var(--orange);color:#fff}
+.badge-tibio{background:var(--orange-soft);color:var(--orange)}
+.badge-frio{background:var(--primary-soft);color:var(--primary)}
+.badge-pagado{background:var(--lime-soft);color:#3a6e00}
+
+/* DETAIL PANEL */
+.detail-panel{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:24px;margin-top:20px;box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.detail-header h3{font-size:18px;font-weight:800}
+.close-btn{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.detail-item{background:var(--surface-alt);border-radius:10px;padding:10px 14px}
+.detail-item-label{color:var(--text-muted);font-size:11px;font-weight:600}
+.detail-item-val{color:var(--text);font-size:14px;font-weight:600;margin-top:2px;word-break:break-all}
+.estado-btns{display:flex;gap:8px;flex-wrap:wrap}
+.estado-btn{background:var(--surface-alt);color:var(--text-2);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit}
+.estado-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.section-label{color:var(--text-2);font-size:12px;font-weight:700;margin-bottom:8px}
+.success-banner{background:var(--lime-soft);border:1.5px solid var(--lime);border-radius:12px;padding:12px 16px;color:#3a6e00;font-weight:700;text-align:center}
+
+/* ALERTS */
+.alert-box{background:var(--error-soft);border:1.5px solid rgba(230,59,59,.2);border-radius:14px;padding:14px 18px;margin-bottom:18px}
+.alert-title{color:var(--error);font-weight:800;margin-bottom:6px}
+.alert-item{color:var(--text-2);font-size:13px;margin-bottom:3px}
+.alert-wa{color:#25D366;margin-left:10px;font-size:12px;text-decoration:none;font-weight:700}
+
+/* TALLERES ADMIN */
+.taller-admin-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:22px;margin-bottom:14px}
+.taller-admin-card.editing{border-color:var(--primary)}
+.taller-admin-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.taller-admin-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.estado-dot{font-size:13px;font-weight:700}
+.estado-dot.activo{color:var(--success)}
+.estado-dot.oculto{color:var(--text-muted)}
+.inscritos-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.inscrito-chip{border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700}
+.inscrito-chip.pagado{background:var(--lime-soft);color:#3a6e00}
+.inscrito-chip.pendiente{background:var(--primary-soft);color:var(--primary)}
+.meet-tag{font-size:11px;color:var(--success);font-weight:600;margin-top:4px}
+
+/* FORM NUEVO TALLER */
+.form-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.form-mini label{color:var(--text-2);font-size:12px;font-weight:600;display:block;margin-bottom:5px}
+.form-mini input{width:100%;background:var(--surface-alt);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-size:14px;font-family:inherit;box-sizing:border-box}
+.add-btn-row{display:flex;justify-content:flex-end;margin-bottom:14px}
+.nuevo-taller-form{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:22px;margin-bottom:18px}
+.nuevo-taller-form h4{font-size:15px;font-weight:800;margin-bottom:16px}
+
+/* LOGIN */
+.login-wrap{max-width:380px;margin:80px auto;padding:0 20px}
+.login-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center}
+.login-icon{font-size:36px;margin-bottom:12px}
+.login-card h2{font-weight:900;margin-bottom:6px;color:var(--text)}
+.login-card p{color:var(--text-2);font-size:14px;margin-bottom:24px}
+.pwd-input{width:100%;background:var(--surface-alt);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:15px;margin-bottom:12px;box-sizing:border-box;outline:none;text-align:center;letter-spacing:2px;font-family:inherit}
+.pwd-error{color:var(--error);font-size:13px;margin-bottom:10px;min-height:18px}
+
+/* SPINNER */
+.spinner{text-align:center;padding:40px;color:var(--text-muted);font-size:14px}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .form-grid-4{grid-template-columns:1fr 1fr}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-<nav><div class="logo"><span class="logo-text">JAPI</span><span class="logo-badge">HUB</span></div><div class="nav-tabs"><button class="nav-tab active" onclick="mostrarVista('publico')">🌐 Portal</button><button class="nav-tab" onclick="mostrarVista('admin')">🔐 Admin</button></div></nav>
+
+<nav>
+  <div class="logo">
+    <span class="logo-text">JAPI</span>
+    <span class="logo-badge">HUB</span>
+  </div>
+  <div>
+    <button class="nav-tab active" onclick="mostrarVista('publico')">🌐 Portal</button>
+    <button class="nav-tab" onclick="mostrarVista('admin')">🔐 Admin</button>
+  </div>
+</nav>
+
+<!-- ══════════════ VISTA PÚBLICA ══════════════ -->
 <div id="view-publico" class="view active">
-  <div id="paso-lista" class="container"><div class="hero"><div class="hero-tag">TALLER VIRTUAL · GRUPALES</div><h1>Cerrá Más Ventas<br><span>por WhatsApp</span></h1><p>Elegí la fecha que mejor te quede y registrate en minutos.</p></div><div id="talleres-lista"><div class="spinner">Cargando fechas...</div></div><div style="text-align:center;margin-top:28px;color:var(--text-muted);font-size:12px;">¿Dudas? → <a href="https://wa.me/50660066273" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:none;">WhatsApp Japi Hub</a></div></div>
-  <div id="paso-form" class="container" style="display:none;"><button class="back-btn" onclick="mostrarPaso('lista')">← Volver</button><div class="card"><div class="form-highlight"><div class="fecha" id="form-fecha-label"></div><div class="sub">Taller: Cerrá Más Ventas por WhatsApp</div></div><h3 style="font-weight:800;margin-bottom:20px;">Completá tu registro</h3><div class="form-group"><label>Nombre completo *</label><input type="text" id="inp-nombre" placeholder="Tu nombre completo" /></div><div class="form-group"><label>WhatsApp (con código país) *</label><input type="tel" id="inp-whatsapp" placeholder="506XXXXXXXX" /></div><div class="form-group"><label>Correo electrónico *</label><input type="email" id="inp-email" placeholder="tucorreo@ejemplo.com" /></div><div class="form-group"><label>Instagram (opcional)</label><input type="text" id="inp-instagram" placeholder="@tuusuario" /></div><div class="form-group"><label>Sitio web (opcional)</label><input type="text" id="inp-website" placeholder="www.tuempresa.com" /></div><div class="form-group"><label>Tipo de negocio (opcional)</label><input type="text" id="inp-negocio" placeholder="Ej: ventas, servicios, e-commerce" /></div>placeholder="tucorreo@ejemplo.com" /></div><button class="btn btn-primary btn-block" onclick="registrarse()" id="btn-registro">Reservar mi cupo →</button></div></div>
-  <div id="paso-confirmacion" class="container" style="display:none;text-align:center;"><div style="font-size:52px;margin-bottom:12px;">🎉</div><h2 style="font-weight:900;margin-bottom:8px;">¡Registro recibido, <span id="conf-nombre"></span>!</h2><p style="color:var(--text-2);font-size:14px;margin-bottom:24px;">Para confirmar tu lugar, realizá el pago por SINPE Móvil:</p><div class="sinpe-box"><div class="sinpe-row"><span class="sinpe-label">📱 Número SINPE</span><span class="sinpe-val primary">6006-6273</span></div><div class="sinpe-row"><span class="sinpe-label">👤 A nombre de</span><span class="sinpe-val normal">Lorna Martínez Aguilar</span></div><div class="sinpe-row"><span class="sinpe-label">💰 Monto (IVA incluido)</span><span class="sinpe-val success">₡25.398</span></div></div><a id="btn-wa-conf" href="#" target="_blank" class="btn-wa">📲 Enviar comprobante por WhatsApp</a><div class="confirm-box">📧 En cuanto recibamos tu comprobante, te enviamos al correo <strong id="conf-email"></strong> el <strong>link de Meet</strong> y todos los <strong>materiales del taller</strong>. ¡Nos vemos pronto!</div></div>
+
+  <div id="paso-lista" class="container">
+    <div class="hero">
+      <div class="hero-tag">TALLER VIRTUAL · GRUPALES</div>
+      <h1>Cerrá Más Ventas<br><span>por WhatsApp</span></h1>
+      <p>Elegí la fecha que mejor te quede y registrate en minutos.</p>
+    </div>
+    <div id="talleres-lista"><div class="spinner">Cargando fechas...</div></div>
+    <div style="text-align:center;margin-top:28px;color:var(--text-muted);font-size:12px;">
+      ¿Dudas? → <a href="https://wa.me/50660066273" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:none;">WhatsApp Japi Hub</a>
+    </div>
+  </div>
+
+  <div id="paso-form" class="container" style="display:none">
+    <button class="back-btn" onclick="mostrarPaso('lista')">← Volver</button>
+    <div class="card">
+      <div class="form-highlight">
+        <div class="f-fecha" id="form-fecha-label"></div>
+        <div class="f-sub">Taller: Cerrá Más Ventas por WhatsApp</div>
+      </div>
+      <h3 style="font-weight:800;margin-bottom:20px">Completá tu registro</h3>
+      <div class="form-group">
+        <label>Nombre completo *</label>
+        <input type="text" id="inp-nombre" placeholder="Tu nombre completo"/>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp (con código país) *</label>
+        <input type="tel" id="inp-whatsapp" placeholder="506XXXXXXXX"/>
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico *</label>
+        <input type="email" id="inp-email" placeholder="tucorreo@ejemplo.com"/>
+      </div>
+      <div class="form-group">
+        <label>Instagram (opcional)</label>
+        <input type="text" id="inp-instagram" placeholder="@tuusuario"/>
+      </div>
+      <div class="form-group">
+        <label>Sitio web (opcional)</label>
+        <input type="text" id="inp-website" placeholder="www.tuempresa.com"/>
+      </div>
+      <div class="form-group">
+        <label>Tipo de negocio (opcional)</label>
+        <input type="text" id="inp-negocio" placeholder="Ej: ventas, servicios, e-commerce"/>
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-registro" onclick="registrarse()">Reservar mi cupo →</button>
+    </div>
+  </div>
+
+  <div id="paso-confirmacion" class="container" style="display:none;text-align:center">
+    <div style="font-size:52px;margin-bottom:12px">🎉</div>
+    <h2 style="font-weight:900;margin-bottom:8px">¡Registro recibido, <span id="conf-nombre"></span>!</h2>
+    <p style="color:var(--text-2);font-size:14px;margin-bottom:24px">Para confirmar tu lugar, realizá el pago por SINPE Móvil:</p>
+    <div class="sinpe-box">
+      <div class="sinpe-row"><span class="sinpe-label">📱 Número SINPE</span><span class="sinpe-val c-primary">6006-6273</span></div>
+      <div class="sinpe-row"><span class="sinpe-label">👤 A nombre de</span><span class="sinpe-val c-normal">Lorna Martínez Aguilar</span></div>
+      <div class="sinpe-row"><span class="sinpe-label">💰 Monto (IVA incluido)</span><span class="sinpe-val c-success">₡25.398</span></div>
+    </div>
+    <a id="btn-wa-conf" href="#" target="_blank" class="btn-wa">📲 Enviar comprobante por WhatsApp</a>
+    <div class="confirm-box">
+      📧 En cuanto recibamos tu comprobante, te enviamos al correo <strong id="conf-email"></strong> el <strong>link de Meet</strong> y todos los <strong>materiales del taller</strong>. ¡Nos vemos pronto!
+    </div>
+  </div>
+
 </div>
-<div id="view-admin" class="view">
-  <div id="admin-login" class="admin-login panel"><div class="login-title">🔐 Panel Admin</div><div class="login-sub">Ingresá la contraseña para ver leads y talleres.</div><div id="login-error" class="login-error">Contraseña incorrecta. Intentá de nuevo.</div><div class="form-group"><label>Contraseña Admin</label><input type="password" id="admin-password" placeholder="Contraseña" onkeydown="if(event.key==='Enter') loginAdmin()" /></div><button class="btn btn-primary btn-block" onclick="loginAdmin()">Entrar al panel →</button></div>
-  <div id="admin-content" class="container-wide" style="display:none;"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;"><div class="admin-tabs"><button class="admin-tab active" onclick="adminTab('leads')">👥 Leads</button><button class="admin-tab" onclick="adminTab('talleres')">📅 Talleres</button></div><button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">Cerrar sesión</button></div><div id="admin-leads"><div id="alert-pendientes"></div><div class="stats-grid" id="stats-grid"></div><div class="filter-row"><button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button><button class="filter-btn" onclick="filtrar('caliente', this)">🔥 Calientes</button><button class="filter-btn" onclick="filtrar('tibio', this)">🌡 Tibios</button><button class="filter-btn" onclick="filtrar('frio', this)">❄️ Fríos</button><button class="filter-btn" onclick="filtrar('pagado', this)">✅ Pagados</button></div><div id="leads-lista"><div class="spinner">Cargando...</div></div><div id="lead-detail" style="display:none;"></div></div><div id="admin-talleres" style="display:none;"><div class="add-btn-row"><button class="btn btn-primary" onclick="toggleNuevoForm()">+ Agregar taller</button></div><div id="nuevo-taller-form" style="display:none;" class="nuevo-taller-form"><h4>Nuevo taller</h4><div class="form-grid-3"><div class="form-mini"><label>Fecha *</label><input type="date" id="nt-fecha" /></div><div class="form-mini"><label>Hora *</label><input type="time" id="nt-hora" value="18:00" /></div><div class="form-mini"><label>Cupos totales</label><input type="number" id="nt-cupos" value="7" min="1" /></div><div class="form-mini"><label>Link de Google Meet</label><input type="text" id="nt-meet" placeholder="https://meet.google.com/xxx-yyyy-zzz" /></div> /></div></div><button class="btn btn-primary" onclick="crearTaller()">Guardar taller</button></div><div id="talleres-admin-lista"><div class="spinner">Cargando...</div></div></div></div>
-</div>
+
+<!-- ══════════════ VISTA ADMIN ══════════════ -->
+<div id="view-admin" class="view"></div>
+
 <script>
 const SB='https://tkzrkzrkxxibovctlbnr.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrenJrenJreHhpYm92Y3RsYm5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTcyODIsImV4cCI6MjA5MDQ3MzI4Mn0.xEK9qU83G9nSwj9DHlTsGQ0hGB1oZvorrVeU4ZQ2XAc';
 const ADMIN_PASSWORD='JapiHub2026!';
-async function sb(path,opts={}){const r=await fetch(`${SB}/rest/v1/${path}`,{headers:{apikey:KEY,Authorization:`Bearer ${KEY}`,'Content-Type':'application/json',Prefer:'return=representation',...opts.headers},...opts});const t=await r.text();return t?JSON.parse(t):[];}
-let talleres=[],leads=[],selectedTaller=null,selectedLead=null,filtroEstado='todos',editandoId=null;
-function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}function fmtFecha(str){if(!str)return'';return new Date(str+'T12:00:00').toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}function diasDesde(dateStr){return Math.floor((Date.now()-new Date(dateStr))/86400000)}function badge(estado){const map={caliente:'badge-caliente',tibio:'badge-tibio',frio:'badge-frio',pagado:'badge-pagado'};const labels={caliente:'🔥 Caliente',tibio:'🌡 Tibio',frio:'❄️ Frío',pagado:'✅ Pagado'};return `<span class="badge ${map[estado]||''}">${labels[estado]||estado}</span>`}
-function adminAutorizado(){return sessionStorage.getItem('japiAdminOk')==='1'}
-function mostrarVista(v){document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));document.getElementById(`view-${v}`).classList.add('active');document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',(v==='publico'&&i===0)||(v==='admin'&&i===1)));if(v==='admin'){if(adminAutorizado()){mostrarAdminContent();}else{document.getElementById('admin-login').style.display='block';document.getElementById('admin-content').style.display='none';setTimeout(()=>document.getElementById('admin-password')?.focus(),50)}}}
-function loginAdmin(){const pass=document.getElementById('admin-password').value;const err=document.getElementById('login-error');if(pass===ADMIN_PASSWORD){sessionStorage.setItem('japiAdminOk','1');err.style.display='none';mostrarAdminContent();}else{err.style.display='block';}}
-function logoutAdmin(){sessionStorage.removeItem('japiAdminOk');document.getElementById('admin-password').value='';document.getElementById('admin-login').style.display='block';document.getElementById('admin-content').style.display='none'}
-function mostrarAdminContent(){document.getElementById('admin-login').style.display='none';document.getElementById('admin-content').style.display='block';cargarAdmin();}
-function mostrarPaso(p){['lista','form','confirmacion'].forEach(id=>{document.getElementById(`paso-${id}`).style.display=p===id?'block':'none'})}function adminTab(t){document.getElementById('admin-leads').style.display=t==='leads'?'block':'none';document.getElementById('admin-talleres').style.display=t==='talleres'?'block':'none';document.querySelectorAll('.admin-tab').forEach((el,i)=>el.classList.toggle('active',(t==='leads'&&i===0)||(t==='talleres'&&i===1)));if(t==='talleres')renderTalleresAdmin()}
-async function cargarTalleresPublico(){talleres=await sb('talleres?select=*&order=fecha.asc');const activos=talleres.filter(t=>t.activo&&t.inscritos<t.cupos);const el=document.getElementById('talleres-lista');if(!activos.length){el.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:40px">No hay fechas disponibles por el momento.</p>';return}el.innerHTML=activos.map(t=>{const libres=t.cupos-t.inscritos;const pct=Math.round((t.inscritos/t.cupos)*100);const alerta=libres<=3;return `<div class="card"><div class="card-row"><div><div class="taller-fecha">${cap(fmtFecha(t.fecha))}</div><div class="taller-meta">🕕 ${t.hora} · hora Costa Rica · Zoom/Meet</div><div class="taller-precio">₡25.398 <span class="taller-iva">IVA incluido</span></div></div><button class="btn btn-primary" onclick="seleccionarTaller('${t.id}')">Me inscribo →</button></div><div class="progress-wrap"><div class="progress-label" style="color:${alerta?'var(--error)':'var(--text-muted)'};font-weight:${alerta?700:400}">${alerta?`🔴 ¡Solo quedan ${libres} cupos!`:`${libres} cupos disponibles`}</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div></div></div>`}).join('')}
-function seleccionarTaller(id){selectedTaller=talleres.find(t=>t.id===id);document.getElementById('form-fecha-label').textContent='📅 '+cap(fmtFecha(selectedTaller.fecha))+' · '+selectedTaller.hora;mostrarPaso('form')}
-async function registrarse(){const nombre=document.getElementById('inp-nombre').value.trim();const whatsapp=document.getElementById('inp-whatsapp').value.trim();const email=document.getElementById('inp-email').value.trim();if(!nombre||!whatsapp)return alert('Por favor completá nombre y WhatsApp.');if(!email)return alert('El correo electrónico es obligatorio.');const btn=document.getElementById('btn-registro');btn.textContent='Guardando...';btn.disabled=true;try{await sb('leads',{method:'POST',body:JSON.stringify({nombre,email,whatsapp,taller_id:selectedTaller.id,taller_fecha:selectedTaller.fecha,estadestado:'tibio',pagado:false,notas:'',instagram:document.getElementById('inp-instagram').value.trim(),website:document.getElementById('inp-website').value.trim(),tipo_negocio:document.getElementById('inp-negocio').value.trim()})});const [t]=await sb(`talleres?id=eq.${selectedTaller.id}&select=inscritos`);await sb(`talleres?id=eq.${selectedTaller.id}`,{method:'PATCH',body:JSON.stringify({inscritos:(t?.inscritos||0)+1})});document.getElementById('conf-nombre').textContent=nombre.split(' ')[0];document.getElementById('conf-email').textContent=email;document.getElementById('btn-wa-conf').href=`https://wa.me/50660066273?text=Hola%20Lorna!%20Hice%20el%20SINPE%20para%20el%20taller%20del%20${encodeURIComponent(selectedTaller.fecha)}%2C%20mi%20nombre%20es%20${encodeURIComponent(nombre)}.%20Te%20mando%20el%20comprobante!%20%F0%9F%99%8C`;mostrarPaso('confirmacion')}catch(e){alert('Error al registrar. Intentá de nuevo.')}btn.textContent='Reservar mi cupo →';btn.disabled=false}
-async function cargarAdmin(){[leads,talleres]=await Promise.all([sb('leads?select=*&order=created_at.desc'),sb('talleres?select=*&order=fecha.asc')]);renderStats();renderLeads();renderAlertas();renderTalleresAdmin()}
-function renderStats(){const s=[{label:'Total leads',val:leads.length,color:'var(--primary)'},{label:'🔥 Calientes',val:leads.filter(l=>l.estado==='caliente').length,color:'var(--orange)'},{label:'✅ Pagados',val:leads.filter(l=>l.pagado).length,color:'var(--success)'},{label:'⏳ Pendientes',val:leads.filter(l=>!l.pagado).length,color:'var(--text-2)'}];document.getElementById('stats-grid').innerHTML=s.map(s=>`<div class="stat-card"><div class="stat-val" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('')}
-function renderAlertas(){const p=leads.filter(l=>!l.pagado&&diasDesde(l.created_at)>=3);const el=document.getElementById('alert-pendientes');if(!p.length){el.innerHTML='';return}el.innerHTML=`<div class="alert-box"><div class="alert-title">⚠️ ${p.length} lead(s) sin pagar hace 3+ días</div>${p.map(l=>`<div class="alert-item">· ${l.nombre} — hace ${diasDesde(l.created_at)} días <a href="https://wa.me/${l.whatsapp}?text=Hola%20${encodeURIComponent(l.nombre.split(' ')[0])}!%20Te%20escribo%20de%20Japi%20Hub%2C%20%C2%BFpudiste%20hacer%20el%20SINPE%3F%20%F0%9F%99%8C" target="_blank" class="alert-wa">📲 Escribir</a></div>`).join('')}</div>`}
-const ordenEstado={caliente:0,tibio:1,frio:2,pagado:3};function filtrar(estado,btn){filtroEstado=estado;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderLeads()}
-function renderLeads(){const lista=[...leads].filter(l=>filtroEstado==='todos'||l.estado===filtroEstado).sort((a,b)=>(ordenEstado[a.estado]??9)-(ordenEstado[b.estado]??9));const el=document.getElementById('leads-lista');if(!lista.length){el.innerHTML='<div class="spinner">No hay leads todavía.</div>';return}el.innerHTML=lista.map(l=>{const dias=diasDesde(l.created_at);const alerta=!l.pagado&&dias>=3?`<span class="alerta">· hace ${dias} días sin pagar</span>`:'';return `<div class="lead-card${selectedLead?.id===l.id?' selected':''}" onclick="abrirLead('${l.id}')"><div><div class="lead-nombre">${l.nombre}</div><div class="lead-meta">📅 ${l.taller_fecha} · ${l.email}${alerta}</div></div><div class="lead-actions">${badge(l.estado)}${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}<a href="https://wa.me/${l.whatsapp}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none;" onclick="event.stopPropagation()">📲</a></div></div>`}).join('')}
-function abrirLead(id){selectedLead=leads.find(l=>l.id===id);renderLeads();const el=document.getElementById('lead-detail');el.style.display='block';el.innerHTML=`<div class="detail-panel"><div class="detail-header"><h3>${selectedLead.nombre}</h3><button class="close-btn" onclick="cerrarLead()">✕</button></div><div class="detail-grid">${[['WhatsApp',selectedLead.whatsapp],['Email',selectedLead.email],['Taller',selectedLead.taller_fecha],['Estado',cap(selectedLead.estado)]].map(([k,v])=>`<div class="detail-item"><div class="detail-item-label">${k}</div><div class="detail-item-val">${v}</div></div>`).join('')}</div><div style="margin-bottom:16px;"><div class="section-label">ESTADO DEL LEAD</div><div class="estado-btns">${['caliente','tibio','frio'].map(e=>`<button class="estado-btn${selectedLead.estado===e?' active':''}" onclick="cambiarEstado('${selectedLead.id}','${e}')">${e==='caliente'?'🔥 Caliente':e==='tibio'?'🌡 Tibio':'❄️ Frío'}</button>`).join('')}</div></div><div style="margin-bottom:16px;"><div class="section-label">NOTAS</div><textarea id="nota-input" style="width:100%;background:var(--surface-alt);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:13px;font-family:inherit;">${selectedLead.notas||''}</textarea><button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="guardarNota('${selectedLead.id}')">Guardar nota</button></div>${!selectedLead.pagado?`<button class="btn btn-success btn-block" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>`:`<div class="success-banner">✅ Pago confirmado · Link de Meet y materiales enviados</div>`}</div>`;el.scrollIntoView({behavior:'smooth'})}
-function cerrarLead(){selectedLead=null;document.getElementById('lead-detail').style.display='none';renderLeads()}async function confirmarPago(id){const lead=leads.find(l=>l.id===id);const taller=talleres.find(t=>t.fecha===lead?.taller_fecha);await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({pagado:true,estado:'pagado'})});if(lead?.email&&taller?.meet_link){fetch('https://script.google.com/macros/s/AKfycbyuPyl1WY3zhRSk5UEEb68RYR-FQC8lZG0zR42DclvbGSX390bf5g6NcbcFBIgk14Ik/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:lead.nombre,email:lead.email,taller_fecha:lead.taller_fecha,taller_hora:taller.hora||'6:00 PM',meet_link:taller.meet_link})})}await cargarAdmin();if(selectedLead?.id===id)abrirLead(id)}async function cambiarEstado(id,estado){await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({estado})});leads=leads.map(l=>l.id===id?{...l,estado}:l);if(selectedLead?.id===id)selectedLead={...selectedLead,estado};renderLeads();abrirLead(id)}async function guardarNota(id){const nota=document.getElementById('nota-input').value;await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({notas:nota})});leads=leads.map(l=>l.id===id?{...l,notas:nota}:l)}
-function renderTalleresAdmin(){const el=document.getElementById('talleres-admin-lista');if(!talleres.length){el.innerHTML='<div class="spinner">No hay talleres.</div>';return}el.innerHTML=talleres.map(t=>{const libres=t.cupos-t.inscritos;const pct=Math.round((t.inscritos/t.cupos)*100);const thisLeads=leads.filter(l=>l.taller_fecha===t.fecha);if(editandoId===t.id){return `<div class="taller-admin-card editing"><div style="font-weight:800;margin-bottom:14px;">✏️ Editando taller</div><div class="form-grid-3"><div class="form-mini"><label>Fecha</label><input type="date" id="ed-fecha" value="${t.fecha}" /></div><div class="form-mini"><label>Hora (ej: 6:00 PM)</label><input type="text" id="ed-hora" value="${t.hora}" /></div><div class="form-mini"><label>Cupos</label><input type="number" id="ed-cupos" value="${t.cupos}" min="${t.inscritos}" /></div><div class="form-mini"><label>Link de Google Meet</label><input type="text" id="ed-meet" value="${t.meet_link||''}" placeholder="https://meet.google.com/xxx-yyyy-zzz" /></div></div><div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="guardarEdicion('${t.id}')">Guardar cambios</button><button class="btn btn-ghost btn-sm" onclick="editandoId=null;renderTalleresAdmin()">Cancelar</button></div></div>`}return `<div class="taller-admin-card"><div class="taller-admin-row"><div class="taller-admin-info"><div class="fecha">${cap(fmtFecha(t.fecha))} · ${t.hora}</div><div class="meta">Inscritos: <b>${t.inscritos}/${t.cupos}</b> · ₡25.398</div>${t.meet_link?`<div class="meta">🔗 Meet: ${t.meet_link}</div>`:''}<div class="progress-wrap" style="margin-top:10px;"><div class="progress-label" style="color:${libres<=3?'var(--error)':'var(--text-muted)'};font-weight:${libres<=3?700:400};font-size:12px;">${libres<=3?`🔴 Solo ${libres} cupos libres`:`${libres} cupos disponibles`}</div><div class="progress-bar" style="width:200px;"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div></div></div><div class="taller-admin-actions"><span class="estado-dot ${t.activo?'activo':'oculto'}">${t.activo?'● Activo':'○ Oculto'}</span><button class="btn btn-secondary btn-sm" onclick="editandoId='${t.id}';renderTalleresAdmin()">✏️ Editar</button><button class="btn ${t.activo?'btn-danger':'btn-success'} btn-sm" onclick="toggleTaller('${t.id}',${t.activo})">${t.activo?'Ocultar':'Activar'}</button></div></div>${thisLeads.length?`<div class="inscritos-chips">${thisLeads.map(l=>`<span class="inscrito-chip ${l.pagado?'pagado':'pendiente'}">${l.nombre.split(' ')[0]} ${l.pagado?'✅':'⏳'}</span>`).join('')}</div>`:''}</div>`}).join('')}
-function toggleNuevoForm(){const f=document.getElementById('nuevo-taller-form');f.style.display=f.style.display==='none'?'block':'none'}async function crearTaller(){const fecha=document.getElementById('nt-fecha').value;const hora=document.getElementById('nt-hora').value;const cupos=parseInt(document.getElementById('nt-cupos').value)||7;if(!fecha||!hora)return alert('Fecha y hora son obligatorias.');const[h,m]=hora.split(':');const hr=parseInt(h);const horaFmt=`${hr>12?hr-12:hr}:${m} ${hr>=12?'PM':'AM'}`;await sb('talleres',{method:'POST',body:JSON.stringify({fecha,hora:horaFmt,cupos,inscritos:0,activo:true,meet_link:document.getElementById('nt-meet').value.trim()})});document.getElementById('nuevo-taller-form').style.display='none';await cargarAdmin();renderTalleresAdmin()}async function guardarEdicion(id){const fecha=document.getElementById('ed-fecha').value;const hora=document.getElementById('ed-hora').value;const cupos=parseInt(document.getElementById('ed-cupos').value);const meet_link=document.getElementById('ed-meet').value.trim();await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({fecha,hora,cupos,meet_link})});editandoId=null;await cargarAdmin();renderTalleresAdmin()}async function toggleTaller(id,activo){await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({activo:!activo})});await cargarAdmin();renderTalleresAdmin()}
+const APPS_SCRIPT='https://script.google.com/macros/s/AKfycbyuPyl1WY3zhRSk5UEEb68RYR-FQC8lZG0zR42DclvbGSX390bf5g6NcbcFBIgk14Ik/exec';
+
+async function sb(path,opts={}){
+  const r=await fetch(`${SB}/rest/v1/${path}`,{
+    headers:{apikey:KEY,Authorization:`Bearer ${KEY}`,'Content-Type':'application/json',Prefer:'return=representation',...(opts.headers||{})},
+    ...opts
+  });
+  const t=await r.text();
+  return t?JSON.parse(t):[];
+}
+
+// ── ESTADO ─────────────────────────────────────────────────
+let talleres=[],leads=[],selectedTaller=null,selectedLead=null,filtroEstado='todos',editandoId=null,adminAuth=false;
+
+// ── UTILS ──────────────────────────────────────────────────
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
+function fmtFecha(str){
+  if(!str)return'';
+  return new Date(str+'T12:00:00').toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function diasDesde(d){return Math.floor((Date.now()-new Date(d))/86400000)}
+function badge(e){
+  const m={caliente:'badge-caliente',tibio:'badge-tibio',frio:'badge-frio',pagado:'badge-pagado'};
+  const l={caliente:'🔥 Caliente',tibio:'🌡 Tibio',frio:'❄️ Frío',pagado:'✅ Pagado'};
+  return`<span class="badge ${m[e]||''}">${l[e]||e}</span>`;
+}
+
+// ── NAVEGACIÓN ─────────────────────────────────────────────
+function mostrarVista(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`view-${v}`).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',(v==='publico'&&i===0)||(v==='admin'&&i===1)));
+  if(v==='admin'){
+    adminAuth?renderAdmin():renderLogin();
+  }
+}
+
+function mostrarPaso(p){
+  ['lista','form','confirmacion'].forEach(id=>{
+    document.getElementById(`paso-${id}`).style.display=p===id?'block':'none';
+  });
+}
+
+// ── LOGIN ──────────────────────────────────────────────────
+function renderLogin(){
+  document.getElementById('view-admin').innerHTML=`
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-icon">🔐</div>
+        <h2>Panel Admin</h2>
+        <p>Japi Hub · Acceso restringido</p>
+        <input class="pwd-input" type="password" id="pwd-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter')verificarClave()"/>
+        <div class="pwd-error" id="pwd-error"></div>
+        <button class="btn btn-primary btn-block" onclick="verificarClave()">Entrar →</button>
+      </div>
+    </div>`;
+}
+
+function verificarClave(){
+  const pwd=document.getElementById('pwd-input').value.trim();
+  if(!pwd)return;
+  if(pwd===ADMIN_PASSWORD){
+    adminAuth=true;
+    sessionStorage.setItem('japi_admin','1');
+    renderAdmin();
+  }else{
+    document.getElementById('pwd-error').textContent='❌ Contraseña incorrecta';
+    document.getElementById('pwd-input').value='';
+  }
+}
+
+function cerrarSesion(){
+  adminAuth=false;
+  sessionStorage.removeItem('japi_admin');
+  renderLogin();
+}
+
+// ── ADMIN SHELL ────────────────────────────────────────────
+function renderAdmin(){
+  document.getElementById('view-admin').innerHTML=`
+    <div class="container-wide">
+      <div class="admin-header">
+        <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" id="tab-leads" onclick="adminTab('leads')">👥 Leads</button>
+        <button class="admin-tab" id="tab-talleres" onclick="adminTab('talleres')">📅 Talleres</button>
+      </div>
+      <div id="admin-leads"></div>
+      <div id="admin-talleres" style="display:none"></div>
+    </div>`;
+  cargarAdmin();
+}
+
+function adminTab(t){
+  document.getElementById('admin-leads').style.display=t==='leads'?'block':'none';
+  document.getElementById('admin-talleres').style.display=t==='talleres'?'block':'none';
+  document.getElementById('tab-leads').classList.toggle('active',t==='leads');
+  document.getElementById('tab-talleres').classList.toggle('active',t==='talleres');
+  if(t==='talleres')renderTalleresAdmin();
+}
+
+async function cargarAdmin(){
+  [leads,talleres]=await Promise.all([
+    sb('leads?select=*&order=created_at.desc'),
+    sb('talleres?select=*&order=fecha.asc')
+  ]);
+  renderLeads();
+  renderStats();
+  renderAlertas();
+}
+
+// ── STATS Y ALERTAS ────────────────────────────────────────
+function renderStats(){
+  const el=document.getElementById('admin-leads');
+  if(!el)return;
+  const stats=[
+    {label:'Total leads',val:leads.length,color:'var(--primary)'},
+    {label:'🔥 Calientes',val:leads.filter(l=>l.estado==='caliente').length,color:'var(--orange)'},
+    {label:'✅ Pagados',val:leads.filter(l=>l.pagado).length,color:'var(--success)'},
+    {label:'⏳ Pendientes',val:leads.filter(l=>!l.pagado).length,color:'var(--text-2)'},
+  ];
+  const statsHtml=`<div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-val" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('')}</div>`;
+  const alertas=renderAlertasHtml();
+  const filtros=`<div class="filter-row">
+    ${[['todos','Todos'],['caliente','🔥 Calientes'],['tibio','🌡 Tibios'],['frio','❄️ Fríos'],['pagado','✅ Pagados']].map(([v,l])=>
+      `<button class="filter-btn${filtroEstado===v?' active':''}" onclick="filtrar('${v}',this)">${l}</button>`
+    ).join('')}
+  </div>`;
+  el.innerHTML=alertas+statsHtml+filtros+`<div id="leads-lista"></div><div id="lead-detail"></div>`;
+  renderLeadsList();
+}
+
+function renderAlertasHtml(){
+  const p=leads.filter(l=>!l.pagado&&diasDesde(l.created_at)>=3);
+  if(!p.length)return'';
+  return`<div class="alert-box">
+    <div class="alert-title">⚠️ ${p.length} lead(s) sin pagar hace 3+ días</div>
+    ${p.map(l=>`<div class="alert-item">· ${l.nombre} — hace ${diasDesde(l.created_at)} días
+      <a href="https://wa.me/${l.whatsapp}?text=Hola%20${encodeURIComponent(l.nombre.split(' ')[0])}!%20Te%20escribo%20de%20Japi%20Hub%2C%20%C2%BFpudiste%20hacer%20el%20SINPE%3F%20%F0%9F%99%8C" target="_blank" class="alert-wa">📲 Escribir</a>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderAlertas(){
+  const el=document.getElementById('admin-leads');
+  if(el)renderStats();
+}
+
+// ── LEADS ──────────────────────────────────────────────────
+const ordenEstado={caliente:0,tibio:1,frio:2,pagado:3};
+
+function filtrar(estado,btn){
+  filtroEstado=estado;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderLeadsList();
+}
+
+function renderLeads(){renderStats()}
+
+function renderLeadsList(){
+  const el=document.getElementById('leads-lista');
+  if(!el)return;
+  const lista=[...leads]
+    .filter(l=>filtroEstado==='todos'||l.estado===filtroEstado)
+    .sort((a,b)=>(ordenEstado[a.estado]??9)-(ordenEstado[b.estado]??9));
+  if(!lista.length){el.innerHTML='<div class="spinner">No hay leads todavía.</div>';return}
+  el.innerHTML=lista.map(l=>{
+    const dias=diasDesde(l.created_at);
+    const alerta=!l.pagado&&dias>=3?`<span style="color:var(--error);margin-left:8px">· hace ${dias} días sin pagar</span>`:'';
+    return`<div class="lead-card${selectedLead?.id===l.id?' selected':''}" onclick="abrirLead('${l.id}')">
+      <div>
+        <div class="lead-nombre">${l.nombre}</div>
+        <div class="lead-meta">📅 ${l.taller_fecha||'—'} · ${l.email}${alerta}</div>
+      </div>
+      <div class="lead-actions">
+        ${badge(l.estado)}
+        ${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
+        <a href="https://wa.me/${l.whatsapp}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirLead(id){
+  selectedLead=leads.find(l=>l.id===id);
+  renderLeadsList();
+  const el=document.getElementById('lead-detail');
+  if(!el||!selectedLead)return;
+  el.innerHTML=`<div class="detail-panel">
+    <div class="detail-header"><h3>${selectedLead.nombre}</h3><button class="close-btn" onclick="cerrarLead()">✕</button></div>
+    <div class="detail-grid">
+      ${[['WhatsApp',selectedLead.whatsapp],['Email',selectedLead.email],['Taller',selectedLead.taller_fecha||'—'],['Instagram',selectedLead.instagram||'—'],['Sitio web',selectedLead.website||'—'],['Tipo negocio',selectedLead.tipo_negocio||'—']].map(([k,v])=>
+        `<div class="detail-item"><div class="detail-item-label">${k}</div><div class="detail-item-val">${v}</div></div>`
+      ).join('')}
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="section-label">ESTADO DEL LEAD</div>
+      <div class="estado-btns">
+        ${['caliente','tibio','frio'].map(e=>`<button class="estado-btn${selectedLead.estado===e?' active':''}" onclick="cambiarEstado('${selectedLead.id}','${e}')">${e==='caliente'?'🔥 Caliente':e==='tibio'?'🌡 Tibio':'❄️ Frío'}</button>`).join('')}
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="section-label">NOTAS</div>
+      <textarea id="nota-input" style="width:100%;background:var(--surface-alt);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:13px;font-family:inherit;box-sizing:border-box">${selectedLead.notas||''}</textarea>
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="guardarNota('${selectedLead.id}')">Guardar nota</button>
+    </div>
+    ${!selectedLead.pagado
+      ?`<button class="btn btn-success btn-block" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>`
+      :`<div class="success-banner">✅ Pago confirmado · Link de Meet y materiales enviados</div>`
+    }
+  </div>`;
+  el.scrollIntoView({behavior:'smooth'});
+}
+
+function cerrarLead(){
+  selectedLead=null;
+  const el=document.getElementById('lead-detail');
+  if(el)el.innerHTML='';
+  renderLeadsList();
+}
+
+async function confirmarPago(id){
+  const lead=leads.find(l=>l.id===id);
+  const taller=talleres.find(t=>t.fecha===lead?.taller_fecha);
+  await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({pagado:true,estado:'pagado'})});
+  if(lead?.email&&taller?.meet_link){
+    fetch(APPS_SCRIPT,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        nombre:lead.nombre,
+        email:lead.email,
+        taller_fecha:lead.taller_fecha,
+        taller_hora:taller.hora||'6:00 PM',
+        meet_link:taller.meet_link
+      })
+    });
+  }
+  await cargarAdmin();
+  if(selectedLead?.id===id)abrirLead(id);
+}
+
+async function cambiarEstado(id,estado){
+  await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({estado})});
+  leads=leads.map(l=>l.id===id?{...l,estado}:l);
+  if(selectedLead?.id===id){selectedLead={...selectedLead,estado}}
+  renderLeadsList();
+  abrirLead(id);
+}
+
+async function guardarNota(id){
+  const nota=document.getElementById('nota-input').value;
+  await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({notas:nota})});
+  leads=leads.map(l=>l.id===id?{...l,notas:nota}:l);
+}
+
+// ── TALLERES ADMIN ─────────────────────────────────────────
+function renderTalleresAdmin(){
+  const el=document.getElementById('admin-talleres');
+  if(!el)return;
+  const lista=talleres.length?talleres.map(t=>{
+    const libres=t.cupos-t.inscritos;
+    const pct=Math.round((t.inscritos/t.cupos)*100);
+    const chips=leads.filter(l=>l.taller_fecha===t.fecha);
+    if(editandoId===t.id){
+      return`<div class="taller-admin-card editing">
+        <div style="font-weight:800;margin-bottom:14px">✏️ Editando taller</div>
+        <div class="form-grid-4">
+          <div class="form-mini"><label>Fecha</label><input type="date" id="ed-fecha" value="${t.fecha}"/></div>
+          <div class="form-mini"><label>Hora (ej: 6:00 PM)</label><input type="text" id="ed-hora" value="${t.hora}"/></div>
+          <div class="form-mini"><label>Cupos</label><input type="number" id="ed-cupos" value="${t.cupos}" min="${t.inscritos}"/></div>
+          <div class="form-mini"><label>Link Google Meet</label><input type="text" id="ed-meet" value="${t.meet_link||''}" placeholder="https://meet.google.com/xxx"/></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="guardarEdicion('${t.id}')">Guardar cambios</button>
+          <button class="btn btn-ghost btn-sm" onclick="editandoId=null;renderTalleresAdmin()">Cancelar</button>
+        </div>
+      </div>`;
+    }
+    return`<div class="taller-admin-card">
+      <div class="taller-admin-row">
+        <div>
+          <div style="color:var(--primary);font-weight:800;font-size:16px">${cap(fmtFecha(t.fecha))} · ${t.hora}</div>
+          <div style="color:var(--text-2);font-size:13px;margin-top:4px">Inscritos: <b>${t.inscritos}/${t.cupos}</b> · ₡25.398</div>
+          ${t.meet_link?`<div class="meet-tag">🔗 Meet agregado ✓</div>`:'<div style="font-size:11px;color:var(--text-muted);margin-top:3px">⚠️ Sin link de Meet</div>'}
+          <div style="margin-top:10px">
+            <div style="font-size:12px;color:${libres<=3?'var(--error)':'var(--text-muted)'};font-weight:${libres<=3?700:400};margin-bottom:4px">
+              ${libres<=3?`🔴 Solo ${libres} cupos libres`:`${libres} cupos disponibles`}
+            </div>
+            <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div>
+          </div>
+        </div>
+        <div class="taller-admin-actions">
+          <span class="estado-dot ${t.activo?'activo':'oculto'}">${t.activo?'● Activo':'○ Oculto'}</span>
+          <button class="btn btn-secondary btn-sm" onclick="editandoId='${t.id}';renderTalleresAdmin()">✏️ Editar</button>
+          <button class="btn ${t.activo?'btn-danger':'btn-success'} btn-sm" onclick="toggleTaller('${t.id}',${t.activo})">${t.activo?'Ocultar':'Activar'}</button>
+        </div>
+      </div>
+      ${chips.length?`<div class="inscritos-chips">${chips.map(l=>`<span class="inscrito-chip ${l.pagado?'pagado':'pendiente'}">${l.nombre.split(' ')[0]} ${l.pagado?'✅':'⏳'}</span>`).join('')}</div>`:''}</div>`;
+  }).join(''):'<div class="spinner">No hay talleres.</div>';
+
+  el.innerHTML=`
+    <div class="add-btn-row">
+      <button class="btn btn-primary" onclick="toggleNuevoForm()">+ Agregar taller</button>
+    </div>
+    <div id="nuevo-taller-form" style="display:none" class="nuevo-taller-form">
+      <h4>Nuevo taller</h4>
+      <div class="form-grid-4">
+        <div class="form-mini"><label>Fecha *</label><input type="date" id="nt-fecha"/></div>
+        <div class="form-mini"><label>Hora *</label><input type="time" id="nt-hora" value="18:00"/></div>
+        <div class="form-mini"><label>Cupos totales</label><input type="number" id="nt-cupos" value="7" min="1"/></div>
+        <div class="form-mini"><label>Link Google Meet</label><input type="text" id="nt-meet" placeholder="https://meet.google.com/xxx"/></div>
+      </div>
+      <button class="btn btn-primary" onclick="crearTaller()">Guardar taller</button>
+    </div>
+    ${lista}`;
+}
+
+function toggleNuevoForm(){
+  const f=document.getElementById('nuevo-taller-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+async function crearTaller(){
+  const fecha=document.getElementById('nt-fecha').value;
+  const hora=document.getElementById('nt-hora').value;
+  const cupos=parseInt(document.getElementById('nt-cupos').value)||7;
+  const meet_link=document.getElementById('nt-meet').value.trim();
+  if(!fecha||!hora)return alert('Fecha y hora son obligatorias.');
+  const[h,m]=hora.split(':');const hr=parseInt(h);
+  const horaFmt=`${hr>12?hr-12:hr}:${m} ${hr>=12?'PM':'AM'}`;
+  await sb('talleres',{method:'POST',body:JSON.stringify({fecha,hora:horaFmt,cupos,inscritos:0,activo:true,meet_link})});
+  document.getElementById('nuevo-taller-form').style.display='none';
+  await cargarAdmin();
+  renderTalleresAdmin();
+}
+
+async function guardarEdicion(id){
+  const fecha=document.getElementById('ed-fecha').value;
+  const hora=document.getElementById('ed-hora').value;
+  const cupos=parseInt(document.getElementById('ed-cupos').value);
+  const meet_link=document.getElementById('ed-meet').value.trim();
+  await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({fecha,hora,cupos,meet_link})});
+  editandoId=null;
+  await cargarAdmin();
+  renderTalleresAdmin();
+}
+
+async function toggleTaller(id,activo){
+  await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({activo:!activo})});
+  await cargarAdmin();
+  renderTalleresAdmin();
+}
+
+// ── PORTAL PÚBLICO ─────────────────────────────────────────
+async function cargarTalleresPublico(){
+  talleres=await sb('talleres?select=*&order=fecha.asc');
+  const activos=talleres.filter(t=>t.activo&&t.inscritos<t.cupos);
+  const el=document.getElementById('talleres-lista');
+  if(!activos.length){el.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:40px">No hay fechas disponibles por el momento.</p>';return}
+  el.innerHTML=activos.map(t=>{
+    const libres=t.cupos-t.inscritos;
+    const pct=Math.round((t.inscritos/t.cupos)*100);
+    const alerta=libres<=3;
+    return`<div class="card">
+      <div class="card-row">
+        <div>
+          <div class="t-fecha">${cap(fmtFecha(t.fecha))}</div>
+          <div class="t-meta">🕕 ${t.hora} · hora Costa Rica · Zoom/Meet</div>
+          <div class="t-precio">₡25.398<span class="t-iva">IVA incluido</span></div>
+        </div>
+        <button class="btn btn-primary" onclick="seleccionarTaller('${t.id}')">Me inscribo →</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label" style="color:${alerta?'var(--error)':'var(--text-muted)'};font-weight:${alerta?700:400}">
+          ${alerta?`🔴 ¡Solo quedan ${libres} cupos!`:`${libres} cupos disponibles`}
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function seleccionarTaller(id){
+  selectedTaller=talleres.find(t=>t.id===id);
+  document.getElementById('form-fecha-label').textContent='📅 '+cap(fmtFecha(selectedTaller.fecha))+' · '+selectedTaller.hora;
+  mostrarPaso('form');
+}
+
+async function registrarse(){
+  const nombre=document.getElementById('inp-nombre').value.trim();
+  const whatsapp=document.getElementById('inp-whatsapp').value.trim();
+  const email=document.getElementById('inp-email').value.trim();
+  const instagram=document.getElementById('inp-instagram').value.trim();
+  const website=document.getElementById('inp-website').value.trim();
+  const tipo_negocio=document.getElementById('inp-negocio').value.trim();
+  if(!nombre||!whatsapp)return alert('Por favor completá nombre y WhatsApp.');
+  if(!email)return alert('El correo electrónico es obligatorio.');
+  const btn=document.getElementById('btn-registro');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    await sb('leads',{method:'POST',body:JSON.stringify({nombre,email,whatsapp,instagram,website,tipo_negocio,taller_id:selectedTaller.id,taller_fecha:selectedTaller.fecha,estado:'tibio',pagado:false,notas:''})});
+    const[t]=await sb(`talleres?id=eq.${selectedTaller.id}&select=inscritos`);
+    await sb(`talleres?id=eq.${selectedTaller.id}`,{method:'PATCH',body:JSON.stringify({inscritos:(t?.inscritos||0)+1})});
+    document.getElementById('conf-nombre').textContent=nombre.split(' ')[0];
+    document.getElementById('conf-email').textContent=email;
+    document.getElementById('btn-wa-conf').href=`https://wa.me/50660066273?text=Hola%20Lorna!%20Hice%20el%20SINPE%20para%20el%20taller%20del%20${encodeURIComponent(selectedTaller.fecha)}%2C%20mi%20nombre%20es%20${encodeURIComponent(nombre)}.%20Te%20mando%20el%20comprobante!%20%F0%9F%99%8C`;
+    mostrarPaso('confirmacion');
+  }catch(e){alert('Error al registrar. Intentá de nuevo.')}
+  btn.textContent='Reservar mi cupo →';btn.disabled=false;
+}
+
+// ── INIT ───────────────────────────────────────────────────
+if(sessionStorage.getItem('japi_admin')==='1')adminAuth=true;
 cargarTalleresPublico();
 </script>
 </body>
