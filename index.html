@@ -20,7 +20,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* NAV */
 nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:99}
-.logo{display:flex;align-items:center;gap:8px}
+.logo{display:flex;align-items:center;gap:8p
 .logo-text{font-weight:900;color:#fff;font-size:17px;letter-spacing:.5px}
 .logo-badge{background:var(--lime);color:var(--dark);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800}
 .nav-tab{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:700;margin-left:6px}
@@ -500,7 +500,7 @@ async function confirmarPago(id){
   const lead=leads.find(l=>l.id===id);
   const taller=talleres.find(t=>t.fecha===lead?.taller_fecha);
   await sb(`leads?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({pagado:true,estado:'pagado'})});
-  if(lead?.email&&taller?.meet_link){
+  if(lead?.email){
     fetch(APPS_SCRIPT,{
       method:'POST',
       mode:'no-cors',
