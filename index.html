@@ -41,8 +41,7 @@
 </div>
 <script>
 const SB='https://tkzrkzrkxxibovctlbnr.supabase.co';
-const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrenJrenJreHhpYm92Y3RsYm5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTcyODIsImV4cCI6MjA5MDQ3MzI4Mn0.xEK9qU83G9nSwj9DHlTsGQ0hGB1oZvorrVeU4ZQ2XAc
-const ADMIN_PASSWORD='JapiHub2026!';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrenJrenJreHhpYm92Y3RsYm5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTcyODIsImV4cCI6MjA5MDQ3MzI4Mn0.xEK9qU83G9nSwj9DHlTsGQ0hGB1oZvorrVeU4ZQ2XAc';
 async function sb(path,opts={}){const r=await fetch(`${SB}/rest/v1/${path}`,{headers:{apikey:KEY,Authorization:`Bearer ${KEY}`,'Content-Type':'application/json',Prefer:'return=representation',...opts.headers},...opts});const t=await r.text();return t?JSON.parse(t):[];}
 let talleres=[],leads=[],selectedTaller=null,selectedLead=null,filtroEstado='todos',editandoId=null;
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}function fmtFecha(str){if(!str)return'';return new Date(str+'T12:00:00').toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}function diasDesde(dateStr){return Math.floor((Date.now()-new Date(dateStr))/86400000)}function badge(estado){const map={caliente:'badge-caliente',tibio:'badge-tibio',frio:'badge-frio',pagado:'badge-pagado'};const labels={caliente:'🔥 Caliente',tibio:'🌡 Tibio',frio:'❄️ Frío',pagado:'✅ Pagado'};return `<span class="badge ${map[estado]||''}">${labels[estado]||estado}</span>`}
