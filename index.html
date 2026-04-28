@@ -104,9 +104,11 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
 .stat-label{font-size:11px;color:var(--text-muted);margin-top:2px}
 
 /* FILTERS */
-.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .filter-btn{background:var(--surface);color:var(--text-2);border:1.5px solid var(--border);border-radius:8px;padding:5px 13px;font-size:12px;cursor:pointer;font-weight:500;font-family:inherit}
 .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:700}
+.export-btn{background:var(--surface);color:#3a6e00;border:1.5px solid var(--lime);border-radius:8px;padding:5px 13px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit;margin-left:auto}
+.export-btn:hover{background:var(--lime-soft)}
 
 /* LEADS */
 .lead-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px;transition:border-color .15s}
@@ -177,6 +179,15 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
 /* SPINNER */
 .spinner{text-align:center;padding:40px;color:var(--text-muted);font-size:14px}
 
+/* MODAL CONFIRMACION BORRAR */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:20px;padding:32px;max-width:360px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-weight:900;font-size:18px;margin-bottom:8px;color:var(--text)}
+.modal-desc{color:var(--text-2);font-size:14px;margin-bottom:24px;line-height:1.5}
+.modal-btns{display:flex;gap:10px}
+.modal-btns button{flex:1}
+
 /* RESPONSIVE */
 @media(max-width:600px){
   .stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -197,6 +208,19 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
     <button class="nav-tab" onclick="mostrarVista('admin')">🔐 Admin</button>
   </div>
 </nav>
+
+<!-- MODAL BORRAR -->
+<div id="modal-borrar" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">¿Eliminar lead?</div>
+    <div class="modal-desc" id="modal-desc">Esta acción no se puede deshacer.</div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-danger" style="background:var(--error);color:#fff" onclick="confirmarBorrar()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════ VISTA PÚBLICA ══════════════ -->
 <div id="view-publico" class="view active">
@@ -286,6 +310,7 @@ async function sb(path,opts={}){
 
 // ── ESTADO ─────────────────────────────────────────────────
 let talleres=[],leads=[],selectedTaller=null,selectedLead=null,filtroEstado='todos',editandoId=null,adminAuth=false;
+let leadABorrar=null;
 
 // ── UTILS ──────────────────────────────────────────────────
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
@@ -401,6 +426,7 @@ function renderStats(){
     ${[['todos','Todos'],['caliente','🔥 Calientes'],['tibio','🌡 Tibios'],['frio','❄️ Fríos'],['pagado','✅ Pagados']].map(([v,l])=>
       `<button class="filter-btn${filtroEstado===v?' active':''}" onclick="filtrar('${v}',this)">${l}</button>`
     ).join('')}
+    <button class="export-btn" onclick="exportarCSV()">⬇️ Exportar CSV</button>
   </div>`;
   el.innerHTML=alertas+statsHtml+filtros+`<div id="leads-lista"></div><div id="lead-detail"></div>`;
   renderLeadsList();
@@ -452,6 +478,7 @@ function renderLeadsList(){
       <div class="lead-actions">
         ${badge(l.estado)}
         ${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
+        ${!l.pagado?`<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();pedirBorrar('${l.id}')" title="Eliminar lead">🗑️</button>`:''}
         <a href="https://wa.me/${l.whatsapp}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
       </div>
     </div>`;
@@ -482,7 +509,10 @@ function abrirLead(id){
       <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="guardarNota('${selectedLead.id}')">Guardar nota</button>
     </div>
     ${!selectedLead.pagado
-      ?`<button class="btn btn-success btn-block" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>`
+      ?`<div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn btn-success" style="flex:1" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>
+          <button class="btn btn-danger" onclick="pedirBorrar('${selectedLead.id}')">🗑️ Eliminar</button>
+        </div>`
       :`<div class="success-banner">✅ Pago confirmado · Link de Meet y materiales enviados</div>`
     }
   </div>`;
@@ -494,6 +524,59 @@ function cerrarLead(){
   const el=document.getElementById('lead-detail');
   if(el)el.innerHTML='';
   renderLeadsList();
+}
+
+// ── BORRAR LEAD ────────────────────────────────────────────
+function pedirBorrar(id){
+  const lead=leads.find(l=>l.id===id);
+  if(!lead)return;
+  leadABorrar=id;
+  document.getElementById('modal-desc').textContent=`¿Segura que querés eliminar a "${lead.nombre}"? Esta acción no se puede deshacer.`;
+  document.getElementById('modal-borrar').style.display='flex';
+}
+
+function cerrarModal(){
+  leadABorrar=null;
+  document.getElementById('modal-borrar').style.display='none';
+}
+
+async function confirmarBorrar(){
+  if(!leadABorrar)return;
+  const id=leadABorrar;
+  cerrarModal();
+  await sb(`leads?id=eq.${id}`,{method:'DELETE',headers:{Prefer:''}});
+  leads=leads.filter(l=>l.id!==id);
+  if(selectedLead?.id===id){
+    selectedLead=null;
+    const el=document.getElementById('lead-detail');
+    if(el)el.innerHTML='';
+  }
+  renderStats();
+}
+
+// ── EXPORTAR CSV ───────────────────────────────────────────
+function exportarCSV(){
+  const cols=['nombre','email','whatsapp','instagram','website','tipo_negocio','taller_fecha','estado','pagado','notas','created_at'];
+  const headers=['Nombre','Email','WhatsApp','Instagram','Sitio web','Tipo negocio','Fecha taller','Estado','Pagado','Notas','Fecha registro'];
+  const filas=leads.map(l=>cols.map(c=>{
+    let v=l[c]??'';
+    if(c==='pagado')v=v?'Sí':'No';
+    if(c==='created_at')v=v?new Date(v).toLocaleDateString('es-CR'):'';
+    // Escapar comillas y envolver en comillas si contiene coma/salto
+    const s=String(v).replace(/"/g,'""');
+    return s.includes(',')||s.includes('\n')||s.includes('"')?`"${s}"`:s;
+  }).join(','));
+  const csv=[headers.join(','),...filas].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  const fecha=new Date().toISOString().slice(0,10);
+  a.download=`leads-japihub-${fecha}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 async function confirmarPago(id){
