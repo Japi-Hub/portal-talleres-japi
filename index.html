@@ -361,7 +361,7 @@ function verificarClave(){
   if(!pwd)return;
   if(pwd===ADMIN_PASSWORD){
     adminAuth=true;
-sessionStorage.setItem('japi_admin','1');
+localStorage.setItem('japi_admin','1');
     renderAdmin();
   }else{
     document.getElementById('pwd-error').textContent='❌ Contraseña incorrecta';
@@ -371,7 +371,7 @@ sessionStorage.setItem('japi_admin','1');
 
 function cerrarSesion(){
   adminAuth=false;
-sessionStorage.removeItem('japi_admin');
+localStorage.removeItem('japi_admin');
   renderLogin();
 }
 
@@ -791,7 +791,7 @@ async function registrarse(){
 }
 
 // ── INIT ───────────────────────────────────────────────────
-if(sessionStorage.getItem('japi_admin')==='1')adminAuth=true;
+if(localStorage.getItem('japi_admin')==='1')adminAuth=true;
 cargarTalleresPublico();
 </script>
 </body>
