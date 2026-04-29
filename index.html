@@ -438,7 +438,7 @@ function renderAlertasHtml(){
   return`<div class="alert-box">
     <div class="alert-title">⚠️ ${p.length} lead(s) sin pagar hace 3+ días</div>
     ${p.map(l=>`<div class="alert-item">· ${l.nombre} — hace ${diasDesde(l.created_at)} días
-      <a href="https://wa.me/${l.whatsapp}?text=Hola%20${encodeURIComponent(l.nombre.split(' ')[0])}!%20Te%20escribo%20de%20Japi%20Hub%2C%20%C2%BFpudiste%20hacer%20el%20SINPE%3F%20%F0%9F%99%8C" target="_blank" class="alert-wa">📲 Escribir</a>
+      <a href="https://wa.me/${l.whatsapp.replace(/\D/g,'')}" target="_blank" class="alert-wa">📲 Escribir</a>
     </div>`).join('')}
   </div>`;
 }
@@ -479,7 +479,7 @@ function renderLeadsList(){
         ${badge(l.estado)}
         ${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
         ${!l.pagado?`<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();pedirBorrar('${l.id}')" title="Eliminar lead">🗑️</button>`:''}
-        <a href="https://wa.me/${l.whatsapp}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
+        <a href="https://wa.me/${l.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
       </div>
     </div>`;
   }).join('');
@@ -616,10 +616,16 @@ async function guardarNota(id){
 }
 
 // ── TALLERES ADMIN ─────────────────────────────────────────
+let mostrarPasados=false;
+
 function renderTalleresAdmin(){
   const el=document.getElementById('admin-talleres');
   if(!el)return;
-  const lista=talleres.length?talleres.map(t=>{
+  const hoy=new Date().toISOString().slice(0,10);
+  const pasadosCount=talleres.filter(t=>t.fecha<hoy).length;
+  const talleresFiltrados=mostrarPasados?talleres:talleres.filter(t=>t.fecha>=hoy);
+  const lista=talleresFiltrados.length?talleresFiltrados.map(t=>{
+    const esPasado=t.fecha<hoy;
     const libres=t.cupos-t.inscritos;
     const pct=Math.round((t.inscritos/t.cupos)*100);
     const chips=leads.filter(l=>l.taller_fecha===t.fecha);
@@ -638,31 +644,40 @@ function renderTalleresAdmin(){
         </div>
       </div>`;
     }
-    return`<div class="taller-admin-card">
+    return`<div class="taller-admin-card" style="${esPasado?'opacity:.6':''}">
       <div class="taller-admin-row">
         <div>
-          <div style="color:var(--primary);font-weight:800;font-size:16px">${cap(fmtFecha(t.fecha))} · ${t.hora}</div>
+          <div style="color:${esPasado?'var(--text-muted)':'var(--primary)'};font-weight:800;font-size:16px">
+            ${esPasado?'🕐 ':''} ${cap(fmtFecha(t.fecha))} · ${t.hora}
+            ${esPasado?'<span style="background:var(--surface-alt);color:var(--text-muted);border-radius:6px;padding:2px 8px;font-size:11px;margin-left:6px;font-weight:600">Pasado</span>':''}
+          </div>
           <div style="color:var(--text-2);font-size:13px;margin-top:4px">Inscritos: <b>${t.inscritos}/${t.cupos}</b> · ₡25.398</div>
-          ${t.meet_link?`<div class="meet-tag">🔗 Meet agregado ✓</div>`:'<div style="font-size:11px;color:var(--text-muted);margin-top:3px">⚠️ Sin link de Meet</div>'}
-          <div style="margin-top:10px">
+          ${esPasado?'':(t.meet_link?`<div class="meet-tag">🔗 Meet agregado ✓</div>`:'<div style="font-size:11px;color:var(--text-muted);margin-top:3px">⚠️ Sin link de Meet</div>')}
+          ${esPasado?'':`<div style="margin-top:10px">
             <div style="font-size:12px;color:${libres<=3?'var(--error)':'var(--text-muted)'};font-weight:${libres<=3?700:400};margin-bottom:4px">
               ${libres<=3?`🔴 Solo ${libres} cupos libres`:`${libres} cupos disponibles`}
             </div>
             <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div>
-          </div>
+          </div>`}
         </div>
         <div class="taller-admin-actions">
-          <span class="estado-dot ${t.activo?'activo':'oculto'}">${t.activo?'● Activo':'○ Oculto'}</span>
-          <button class="btn btn-secondary btn-sm" onclick="editandoId='${t.id}';renderTalleresAdmin()">✏️ Editar</button>
-          <button class="btn ${t.activo?'btn-danger':'btn-success'} btn-sm" onclick="toggleTaller('${t.id}',${t.activo})">${t.activo?'Ocultar':'Activar'}</button>
+          ${esPasado
+            ?'<span style="font-size:12px;color:var(--text-muted)">Taller finalizado</span>'
+            :`<span class="estado-dot ${t.activo?'activo':'oculto'}">${t.activo?'● Activo':'○ Oculto'}</span>
+             <button class="btn btn-secondary btn-sm" onclick="editandoId='${t.id}';renderTalleresAdmin()">✏️ Editar</button>
+             <button class="btn ${t.activo?'btn-danger':'btn-success'} btn-sm" onclick="toggleTaller('${t.id}',${t.activo})">${t.activo?'Ocultar':'Activar'}</button>`
+          }
         </div>
       </div>
       ${chips.length?`<div class="inscritos-chips">${chips.map(l=>`<span class="inscrito-chip ${l.pagado?'pagado':'pendiente'}">${l.nombre.split(' ')[0]} ${l.pagado?'✅':'⏳'}</span>`).join('')}</div>`:''}</div>`;
-  }).join(''):'<div class="spinner">No hay talleres.</div>';
+  }).join(''):`<div class="spinner">${mostrarPasados?'No hay talleres.':'No hay talleres próximos.'}</div>`;
 
   el.innerHTML=`
-    <div class="add-btn-row">
+    <div class="add-btn-row" style="gap:8px">
       <button class="btn btn-primary" onclick="toggleNuevoForm()">+ Agregar taller</button>
+      ${pasadosCount>0?`<button class="btn btn-ghost btn-sm" style="margin-right:auto;margin-left:0" onclick="mostrarPasados=!mostrarPasados;renderTalleresAdmin()">
+        ${mostrarPasados?'🙈 Ocultar pasados':'🕐 Ver pasados ('+pasadosCount+')'}
+      </button>`:''}
     </div>
     <div id="nuevo-taller-form" style="display:none" class="nuevo-taller-form">
       <h4>Nuevo taller</h4>
