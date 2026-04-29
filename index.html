@@ -478,7 +478,7 @@ function renderLeadsList(){
       <div class="lead-actions">
         ${badge(l.estado)}
         ${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
-        ${!l.pagado?`<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();pedirBorrar('${l.id}')" title="Eliminar lead">🗑️</button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();pedirBorrar('${l.id}')" title="Eliminar lead">🗑️</button>
         <a href="https://wa.me/${l.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
       </div>
     </div>`;
@@ -513,7 +513,8 @@ function abrirLead(id){
           <button class="btn btn-success" style="flex:1" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>
           <button class="btn btn-danger" onclick="pedirBorrar('${selectedLead.id}')">🗑️ Eliminar</button>
         </div>`
-      :`<div class="success-banner">✅ Pago confirmado · Link de Meet y materiales enviados</div>`
+      :`<div class="success-banner">✅ Pago confirmado · Link de Meet y materiales enviados</div>
+        <button class="btn btn-danger btn-sm" style="margin-top:10px;width:100%" onclick="pedirBorrar('${selectedLead.id}')">🗑️ Eliminar este lead</button>`
     }
   </div>`;
   el.scrollIntoView({behavior:'smooth'});
@@ -531,7 +532,10 @@ function pedirBorrar(id){
   const lead=leads.find(l=>l.id===id);
   if(!lead)return;
   leadABorrar=id;
-  document.getElementById('modal-desc').textContent=`¿Segura que querés eliminar a "${lead.nombre}"? Esta acción no se puede deshacer.`;
+  const esPagado=lead.pagado;
+  document.getElementById('modal-desc').innerHTML=esPagado
+    ?`⚠️ <strong>${lead.nombre}</strong> ya tiene pago confirmado. ¿Segura que querés eliminarlo de todas formas? Esta acción no se puede deshacer.`
+    :`¿Segura que querés eliminar a <strong>${lead.nombre}</strong>? Esta acción no se puede deshacer.`;
   document.getElementById('modal-borrar').style.display='flex';
 }
 
