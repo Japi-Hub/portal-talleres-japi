@@ -300,14 +300,14 @@ const ADMIN_PASSWORD='JapiHub2026!';
 const APPS_SCRIPT='https://script.google.com/macros/s/AKfycbyuPyl1WY3zhRSk5UEEb68RYR-FQC8lZG0zR42DclvbGSX390bf5g6NcbcFBIgk14Ik/exec';
 
 async function sb(path,opts={}){
+  const {headers:extraHeaders={}, ...restOpts}=opts;
   const r=await fetch(`${SB}/rest/v1/${path}`,{
-    headers:{apikey:KEY,Authorization:`Bearer ${KEY}`,'Content-Type':'application/json',Prefer:'return=representation',...(opts.headers||{})},
-    ...opts
+    headers:{apikey:KEY,Authorization:`Bearer ${KEY}`,'Content-Type':'application/json',Prefer:'return=representation',...extraHeaders},
+    ...restOpts
   });
   const t=await r.text();
   return t?JSON.parse(t):[];
 }
-
 // ── ESTADO ─────────────────────────────────────────────────
 let talleres=[],leads=[],selectedTaller=null,selectedLead=null,filtroEstado='todos',editandoId=null,adminAuth=false;
 let leadABorrar=null;
