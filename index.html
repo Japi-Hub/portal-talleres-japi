@@ -275,7 +275,7 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
 
   <div id="paso-confirmacion" class="container" style="display:none;text-align:center">
     <div style="font-size:52px;margin-bottom:12px">🎉</div>
-    <h2 style="font-weight:900;margin-bottom:8px">¡Registro recibido, <span id="conf-nombre"></span>\!</h2>
+    <h2 style="font-weight:900;margin-bottom:8px">¡Registro recibido, <span id="conf-nombre"></span>!</h2>
     <p style="color:var(--text-2);font-size:14px;margin-bottom:24px">Para confirmar tu lugar, realizá el pago por SINPE Móvil:</p>
     <div class="sinpe-box">
       <div class="sinpe-row"><span class="sinpe-label">📱 Número SINPE</span><span class="sinpe-val c-primary">6006-6273</span></div>
@@ -284,7 +284,7 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
     </div>
     <a id="btn-wa-conf" href="#" target="_blank" class="btn-wa">📲 Enviar comprobante por WhatsApp</a>
     <div class="confirm-box">
-      📧 En cuanto recibamos tu comprobante, te enviamos al correo <strong id="conf-email"></strong> el <strong>link de Meet</strong> y todos los <strong>materiales del taller</strong>. ¡Nos vemos pronto\!
+      📧 En cuanto recibamos tu comprobante, te enviamos al correo <strong id="conf-email"></strong> el <strong>link de Meet</strong> y todos los <strong>materiales del taller</strong>. ¡Nos vemos pronto!
     </div>
   </div>
 
@@ -296,7 +296,7 @@ nav{background:var(--dark);height:56px;display:flex;align-items:center;justify-c
 <script>
 const SB='https://tkzrkzrkxxibovctlbnr.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrenJrenJreHhpYm92Y3RsYm5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTcyODIsImV4cCI6MjA5MDQ3MzI4Mn0.xEK9qU83G9nSwj9DHlTsGQ0hGB1oZvorrVeU4ZQ2XAc';
-const ADMIN_PASSWORD='JapiHub2026\!';
+const ADMIN_PASSWORD='JapiHub2026!';
 const APPS_SCRIPT='https://script.google.com/macros/s/AKfycbyuPyl1WY3zhRSk5UEEb68RYR-FQC8lZG0zR42DclvbGSX390bf5g6NcbcFBIgk14Ik/exec';
 
 async function sb(path,opts={}){
@@ -316,7 +316,7 @@ let leadABorrar=null;
 // ── UTILS ──────────────────────────────────────────────────
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
 function fmtFecha(str){
-  if(\!str)return'';
+  if(!str)return'';
   return new Date(str+'T12:00:00').toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 function diasDesde(d){return Math.floor((Date.now()-new Date(d))/86400000)}
@@ -359,7 +359,7 @@ function renderLogin(){
 
 function verificarClave(){
   const pwd=document.getElementById('pwd-input').value.trim();
-  if(\!pwd)return;
+  if(!pwd)return;
   if(pwd===ADMIN_PASSWORD){
     adminAuth=true;
     localStorage.setItem('japi_admin','1');
@@ -414,12 +414,12 @@ async function cargarAdmin(){
 // ── STATS Y ALERTAS ────────────────────────────────────────
 function renderStats(){
   const el=document.getElementById('admin-leads');
-  if(\!el)return;
+  if(!el)return;
   const stats=[
     {label:'Total leads',val:leads.length,color:'var(--primary)'},
     {label:'🔥 Calientes',val:leads.filter(l=>l.estado==='caliente').length,color:'var(--orange)'},
     {label:'✅ Pagados',val:leads.filter(l=>l.pagado).length,color:'var(--success)'},
-    {label:'⏳ Pendientes',val:leads.filter(l=>\!l.pagado).length,color:'var(--text-2)'},
+    {label:'⏳ Pendientes',val:leads.filter(l=>!l.pagado).length,color:'var(--text-2)'},
   ];
   const statsHtml=`<div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-val" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('')}</div>`;
   const alertas=renderAlertasHtml();
@@ -434,8 +434,8 @@ function renderStats(){
 }
 
 function renderAlertasHtml(){
-  const p=leads.filter(l=>\!l.pagado&&diasDesde(l.created_at)>=3);
-  if(\!p.length)return'';
+  const p=leads.filter(l=>!l.pagado&&diasDesde(l.created_at)>=3);
+  if(!p.length)return'';
   return`<div class="alert-box">
     <div class="alert-title">⚠️ ${p.length} lead(s) sin pagar hace 3+ días</div>
     ${p.map(l=>`<div class="alert-item">· ${l.nombre} — hace ${diasDesde(l.created_at)} días
@@ -463,14 +463,14 @@ function renderLeads(){renderStats()}
 
 function renderLeadsList(){
   const el=document.getElementById('leads-lista');
-  if(\!el)return;
+  if(!el)return;
   const lista=[...leads]
     .filter(l=>filtroEstado==='todos'||l.estado===filtroEstado)
     .sort((a,b)=>(ordenEstado[a.estado]??9)-(ordenEstado[b.estado]??9));
-  if(\!lista.length){el.innerHTML='<div class="spinner">No hay leads todavía.</div>';return}
+  if(!lista.length){el.innerHTML='<div class="spinner">No hay leads todavía.</div>';return}
   el.innerHTML=lista.map(l=>{
     const dias=diasDesde(l.created_at);
-    const alerta=\!l.pagado&&dias>=3?`<span style="color:var(--error);margin-left:8px">· hace ${dias} días sin pagar</span>`:'';
+    const alerta=!l.pagado&&dias>=3?`<span style="color:var(--error);margin-left:8px">· hace ${dias} días sin pagar</span>`:'';
     return`<div class="lead-card${selectedLead?.id===l.id?' selected':''}" onclick="abrirLead('${l.id}')">
       <div>
         <div class="lead-nombre">${l.nombre}</div>
@@ -478,7 +478,7 @@ function renderLeadsList(){
       </div>
       <div class="lead-actions">
         ${badge(l.estado)}
-        ${\!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
+        ${!l.pagado?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();confirmarPago('${l.id}')">Confirmar pago</button>`:''}
         <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();pedirBorrar('${l.id}')" title="Eliminar lead">🗑️</button>
         <a href="https://wa.me/${l.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn btn-sm" style="background:#25D36622;color:#128C7E;border:none;text-decoration:none" onclick="event.stopPropagation()">📲</a>
       </div>
@@ -490,7 +490,7 @@ function abrirLead(id){
   selectedLead=leads.find(l=>l.id===id);
   renderLeadsList();
   const el=document.getElementById('lead-detail');
-  if(\!el||\!selectedLead)return;
+  if(!el||!selectedLead)return;
   el.innerHTML=`<div class="detail-panel">
     <div class="detail-header"><h3>${selectedLead.nombre}</h3><button class="close-btn" onclick="cerrarLead()">✕</button></div>
     <div class="detail-grid">
@@ -509,7 +509,7 @@ function abrirLead(id){
       <textarea id="nota-input" style="width:100%;background:var(--surface-alt);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:13px;font-family:inherit;box-sizing:border-box">${selectedLead.notas||''}</textarea>
       <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="guardarNota('${selectedLead.id}')">Guardar nota</button>
     </div>
-    ${\!selectedLead.pagado
+    ${!selectedLead.pagado
       ?`<div style="display:flex;gap:10px;margin-top:4px">
           <button class="btn btn-success" style="flex:1" onclick="confirmarPago('${selectedLead.id}')">✅ Confirmar pago y enviar materiales</button>
           <button class="btn btn-danger" onclick="pedirBorrar('${selectedLead.id}')">🗑️ Eliminar</button>
@@ -531,7 +531,7 @@ function cerrarLead(){
 // ── BORRAR LEAD ────────────────────────────────────────────
 function pedirBorrar(id){
   const lead=leads.find(l=>l.id===id);
-  if(\!lead)return;
+  if(!lead)return;
   leadABorrar=id;
   const esPagado=lead.pagado;
   document.getElementById('modal-desc').innerHTML=esPagado
@@ -546,11 +546,11 @@ function cerrarModal(){
 }
 
 async function confirmarBorrar(){
-  if(\!leadABorrar)return;
+  if(!leadABorrar)return;
   const id=leadABorrar;
   cerrarModal();
   await sb(`leads?id=eq.${id}`,{method:'DELETE',headers:{Prefer:''}});
-  leads=leads.filter(l=>l.id\!==id);
+  leads=leads.filter(l=>l.id!==id);
   if(selectedLead?.id===id){
     selectedLead=null;
     const el=document.getElementById('lead-detail');
@@ -637,7 +637,7 @@ let mostrarPasados=false;
 
 function renderTalleresAdmin(){
   const el=document.getElementById('admin-talleres');
-  if(\!el)return;
+  if(!el)return;
   const hoy=new Date().toISOString().slice(0,10);
   const pasadosCount=talleres.filter(t=>t.fecha<hoy).length;
   const talleresFiltrados=mostrarPasados?talleres:talleres.filter(t=>t.fecha>=hoy);
@@ -695,7 +695,7 @@ function renderTalleresAdmin(){
   el.innerHTML=`
     <div class="add-btn-row" style="gap:8px">
       <button class="btn btn-primary" onclick="toggleNuevoForm()">+ Agregar taller</button>
-      ${pasadosCount>0?`<button class="btn btn-ghost btn-sm" style="margin-right:auto;margin-left:0" onclick="mostrarPasados=\!mostrarPasados;renderTalleresAdmin()">
+      ${pasadosCount>0?`<button class="btn btn-ghost btn-sm" style="margin-right:auto;margin-left:0" onclick="mostrarPasados=!mostrarPasados;renderTalleresAdmin()">
         ${mostrarPasados?'🙈 Ocultar pasados':'🕐 Ver pasados ('+pasadosCount+')'}
       </button>`:''}
     </div>
@@ -722,7 +722,7 @@ async function crearTaller(){
   const hora=document.getElementById('nt-hora').value;
   const cupos=parseInt(document.getElementById('nt-cupos').value)||7;
   const meet_link=document.getElementById('nt-meet').value.trim();
-  if(\!fecha||\!hora)return alert('Fecha y hora son obligatorias.');
+  if(!fecha||!hora)return alert('Fecha y hora son obligatorias.');
   const[h,m]=hora.split(':');const hr=parseInt(h);
   const horaFmt=`${hr>12?hr-12:hr}:${m} ${hr>=12?'PM':'AM'}`;
   await sb('talleres',{method:'POST',body:JSON.stringify({fecha,hora:horaFmt,cupos,inscritos:0,activo:true,meet_link})});
@@ -744,7 +744,7 @@ async function guardarEdicion(id){
 }
 
 async function toggleTaller(id,activo){
-  await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({activo:\!activo})});
+  await sb(`talleres?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({activo:!activo})});
   await cargarAdmin();
   renderTalleresAdmin();
 }
@@ -754,7 +754,7 @@ async function cargarTalleresPublico(){
   talleres=await sb('talleres?select=*&order=fecha.asc');
   const activos=talleres.filter(t=>t.activo&&t.inscritos<t.cupos);
   const el=document.getElementById('talleres-lista');
-  if(\!activos.length){el.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:40px">No hay fechas disponibles por el momento.</p>';return}
+  if(!activos.length){el.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:40px">No hay fechas disponibles por el momento.</p>';return}
   el.innerHTML=activos.map(t=>{
     const libres=t.cupos-t.inscritos;
     const pct=Math.round((t.inscritos/t.cupos)*100);
@@ -770,7 +770,7 @@ async function cargarTalleresPublico(){
       </div>
       <div class="progress-wrap">
         <div class="progress-label" style="color:${alerta?'var(--error)':'var(--text-muted)'};font-weight:${alerta?700:400}">
-          ${alerta?`🔴 ¡Solo quedan ${libres} cupos\!`:`${libres} cupos disponibles`}
+          ${alerta?`🔴 ¡Solo quedan ${libres} cupos!`:`${libres} cupos disponibles`}
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>70?'var(--orange)':'var(--lime)'}"></div></div>
       </div>
@@ -791,8 +791,8 @@ async function registrarse(){
   const instagram=document.getElementById('inp-instagram').value.trim();
   const website=document.getElementById('inp-website').value.trim();
   const tipo_negocio=document.getElementById('inp-negocio').value.trim();
-  if(\!nombre||\!whatsapp)return alert('Por favor completá nombre y WhatsApp.');
-  if(\!email)return alert('El correo electrónico es obligatorio.');
+  if(!nombre||!whatsapp)return alert('Por favor completá nombre y WhatsApp.');
+  if(!email)return alert('El correo electrónico es obligatorio.');
   const btn=document.getElementById('btn-registro');
   btn.textContent='Guardando...';btn.disabled=true;
   try{
@@ -801,7 +801,7 @@ async function registrarse(){
     await sb(`talleres?id=eq.${selectedTaller.id}`,{method:'PATCH',body:JSON.stringify({inscritos:(t?.inscritos||0)+1})});
     document.getElementById('conf-nombre').textContent=nombre.split(' ')[0];
     document.getElementById('conf-email').textContent=email;
-    document.getElementById('btn-wa-conf').href=`https://wa.me/50660066273?text=Hola%20Lorna\!%20Hice%20el%20SINPE%20para%20el%20taller%20del%20${encodeURIComponent(selectedTaller.fecha)}%2C%20mi%20nombre%20es%20${encodeURIComponent(nombre)}.%20Te%20mando%20el%20comprobante\!%20%F0%9F%99%8C`;
+    document.getElementById('btn-wa-conf').href=`https://wa.me/50660066273?text=Hola%20Lorna!%20Hice%20el%20SINPE%20para%20el%20taller%20del%20${encodeURIComponent(selectedTaller.fecha)}%2C%20mi%20nombre%20es%20${encodeURIComponent(nombre)}.%20Te%20mando%20el%20comprobante!%20%F0%9F%99%8C`;
     mostrarPaso('confirmacion');
   }catch(e){alert('Error al registrar. Intentá de nuevo.')}
   btn.textContent='Reservar mi cupo →';btn.disabled=false;
