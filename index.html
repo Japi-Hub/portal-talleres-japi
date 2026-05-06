@@ -752,9 +752,40 @@ async function toggleTaller(id,activo){
 }
 
 // ── PORTAL PÚBLICO ─────────────────────────────────────────
+function getTodayCostaRicaDateString(){
+  return new Intl.DateTimeFormat('en-CA',{
+    timeZone:'America/Costa_Rica',
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
+  }).format(new Date());
+}
+
+function esTallerDisponiblePublico(taller,today=getTodayCostaRicaDateString()){
+  const tieneCupos=Number(taller.inscritos||0)<Number(taller.cupos||0);
+  return Boolean(taller.activo)&&taller.fecha>=today&&tieneCupos;
+}
+
+function aplicarDeepLinkTalleresDisponibles(talleresDisponibles){
+  const params=new URLSearchParams(window.location.search);
+  const tallerParam=params.get('taller');
+  if(!tallerParam)return;
+
+  const tallerEncontrado=talleresDisponibles.find(t=>t.id===tallerParam||t.fecha===tallerParam);
+  if(!tallerEncontrado){
+    params.delete('taller');
+    const nuevaQuery=params.toString();
+    const nuevaUrl=`${window.location.pathname}${nuevaQuery?`?${nuevaQuery}`:''}${window.location.hash}`;
+    window.history.replaceState({},'',nuevaUrl);
+    return;
+  }
+
+  seleccionarTaller(tallerEncontrado.id);
+}
+
 async function cargarTalleresPublico(){
   talleres=await sb('talleres?select=*&order=fecha.asc');
-  const activos=talleres.filter(t=>t.activo&&t.inscritos<t.cupos);
+  const activos=talleres.filter(t=>esTallerDisponiblePublico(t));
   const el=document.getElementById('talleres-lista');
   if(!activos.length){el.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:40px">No hay fechas disponibles por el momento.</p>';return}
   el.innerHTML=activos.map(t=>{
@@ -778,10 +809,17 @@ async function cargarTalleresPublico(){
       </div>
     </div>`;
   }).join('');
+  aplicarDeepLinkTalleresDisponibles(activos);
 }
 
 function seleccionarTaller(id){
-  selectedTaller=talleres.find(t=>t.id===id);
+  const taller=talleres.find(t=>t.id===id);
+  if(!taller||!esTallerDisponiblePublico(taller)){
+    alert('Esa fecha ya no está disponible.');
+    mostrarPaso('lista');
+    return;
+  }
+  selectedTaller=taller;
   document.getElementById('form-fecha-label').textContent='📅 '+cap(fmtFecha(selectedTaller.fecha))+' · '+selectedTaller.hora;
   mostrarPaso('form');
 }
